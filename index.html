@@ -24,7 +24,10 @@ body{
   align-items:center;
 }
 
-/* CARD */
+/* PAGE */
+.page{display:none;}
+.page.active{display:block;}
+
 .card{
   background:rgba(255,255,255,0.92);
   backdrop-filter:blur(12px);
@@ -33,32 +36,42 @@ body{
   width:min(600px,92vw);
   text-align:center;
   box-shadow:0 20px 50px rgba(0,0,0,0.18);
-  position:relative;
 }
 
-h1{
-  color:#ff4f9b;
-}
+h1{color:#ff4f9b;}
 
-.typing{
-  min-height:50px;
-  font-size:18px;
-  margin-bottom:10px;
-}
+.typing{min-height:50px;font-size:18px;}
 
-/* YES BUTTON */
-.yes{
-  background:#ff4f9b;
-  color:white;
+/* BUTTON */
+button{
   border:none;
+  cursor:pointer;
   padding:14px 26px;
   border-radius:999px;
   font-size:18px;
-  cursor:pointer;
+}
+
+.yes{
+  background:#ff4f9b;
+  color:white;
   margin-top:10px;
 }
 
-/* NO BUTTON (FREE ROAM MEME STYLE) */
+.next{
+  background:#ff4f9b;
+  color:white;
+  margin-top:10px;
+}
+
+input,select{
+  width:100%;
+  padding:12px;
+  border-radius:12px;
+  border:2px solid #ffd0e6;
+  margin-top:8px;
+}
+
+/* ESCAPE BUTTON */
 .no{
   position:fixed;
   top:50%;
@@ -69,9 +82,15 @@ h1{
   border:2px solid #ff4f9b;
   padding:12px 20px;
   border-radius:999px;
-  cursor:pointer;
-  transition:0.05s;
   z-index:999;
+}
+
+/* PHOTO */
+.final-img{
+  width:100%;
+  border-radius:16px;
+  margin-top:12px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.2);
 }
 
 /* HEARTS */
@@ -94,23 +113,81 @@ h1{
 <source src="music.mp3">
 </audio>
 
-<div class="card">
-
-<h1>芸芸 ❤️</h1>
-
-<div class="typing" id="typing"></div>
-
-<button class="yes" onclick="startLove()">願意 ❤️</button>
-
+<!-- PAGE 1 -->
+<div class="page active" id="page1">
+  <div class="card">
+    <h1>芸芸 ❤️</h1>
+    <div class="typing" id="typing"></div>
+    <button class="yes" onclick="startLove()">願意 ❤️</button>
+  </div>
 </div>
 
+<!-- PAGE 2 -->
+<div class="page" id="page2">
+  <div class="card">
+    <h1>🥰 太好了</h1>
+    <button class="next" onclick="show(3)">下一步</button>
+  </div>
+</div>
+
+<!-- PAGE 3 -->
+<div class="page" id="page3">
+  <div class="card">
+    <h1>📅 約時間</h1>
+    <input type="date" id="date">
+    <input type="time" id="time">
+    <button class="next" onclick="goFood()">下一步</button>
+  </div>
+</div>
+
+<!-- PAGE 4 -->
+<div class="page" id="page4">
+  <div class="card">
+    <h1>🍜 吃什麼</h1>
+    <select id="food">
+      <option value="">請選擇</option>
+      <option>火鍋</option>
+      <option>日料</option>
+      <option>韓式烤肉</option>
+      <option>西餐</option>
+    </select>
+    <button class="next" onclick="goActivity()">下一步</button>
+  </div>
+</div>
+
+<!-- PAGE 5 -->
+<div class="page" id="page5">
+  <div class="card">
+    <h1>🥰 行程</h1>
+    <select id="activity">
+      <option value="">請選擇</option>
+      <option>看電影</option>
+      <option>散步</option>
+      <option>咖啡廳</option>
+      <option>抓娃娃</option>
+    </select>
+    <button class="next" onclick="finish()">完成</button>
+  </div>
+</div>
+
+<!-- PAGE 6 -->
+<div class="page" id="page6">
+  <div class="card">
+    <h1>❤️ 約會成立</h1>
+    <div id="summary"></div>
+    <img src="photo.jpeg" class="final-img">
+  </div>
+</div>
+
+<!-- ESCAPE BUTTON -->
 <button class="no" id="noBtn">不願意 🙈</button>
 
 <script>
 
-let noBtn = document.getElementById("noBtn");
-
 let tease = 0;
+let escaped = false;
+
+const noBtn = document.getElementById("noBtn");
 
 /* TYPEWRITER */
 let text = "我想跟你去一個很普通，但很重要的約會 ❤️";
@@ -124,7 +201,13 @@ function type(){
 }
 type();
 
-/* HEARTS */
+/* PAGE SYSTEM */
+function show(n){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById("page"+n).classList.add("active");
+}
+
+/* START */
 function startLove(){
 
   document.getElementById("bgm").play().catch(()=>{});
@@ -135,12 +218,12 @@ function startLove(){
       h.className="heart";
       h.innerHTML=["❤️","💖","💕"][Math.floor(Math.random()*3)];
       h.style.left=Math.random()*100+"vw";
-      h.style.fontSize=(18+Math.random()*25)+"px";
       document.body.appendChild(h);
       setTimeout(()=>h.remove(),5000);
     },i*20);
   }
 
+  show(2);
 }
 
 /* MOBILE */
@@ -149,80 +232,103 @@ const isTouch =
   navigator.maxTouchPoints > 0;
 
 if(isTouch){
-
   noBtn.addEventListener("click",()=>{
     alert("你明明就願意 ❤️");
   });
-
 }
 
-/* AI MEME ESCAPE */
+/* DESKTOP ESCAPE (ONCE THEN FREEZE) */
 else{
 
-let mouseX = 0, mouseY = 0;
-let lastX = 0, lastY = 0;
-let velX = 0, velY = 0;
+let mouseX=0, mouseY=0;
+let lastX=0, lastY=0;
+let velX=0, velY=0;
 
 document.addEventListener("mousemove",(e)=>{
+  mouseX=e.clientX;
+  mouseY=e.clientY;
 
-  mouseX = e.clientX;
-  mouseY = e.clientY;
+  velX=mouseX-lastX;
+  velY=mouseY-lastY;
 
-  velX = mouseX - lastX;
-  velY = mouseY - lastY;
-
-  lastX = mouseX;
-  lastY = mouseY;
-
+  lastX=mouseX;
+  lastY=mouseY;
 });
 
 setInterval(()=>{
 
-  const rect = noBtn.getBoundingClientRect();
+  if(escaped) return; // 🚨 FREEZE AFTER FIRST ESCAPE
 
-  const cx = rect.left + rect.width/2;
-  const cy = rect.top + rect.height/2;
+  const rect=noBtn.getBoundingClientRect();
 
-  const dist = Math.hypot(mouseX - cx, mouseY - cy);
+  const cx=rect.left+rect.width/2;
+  const cy=rect.top+rect.height/2;
 
-  if(dist < 180){
+  const dist=Math.hypot(mouseX-cx,mouseY-cy);
 
-    /* predict cursor future position */
-    const futureX = mouseX + velX * 12;
-    const futureY = mouseY + velY * 12;
+  if(dist<180){
 
-    /* escape direction */
-    let dx = cx - futureX;
-    let dy = cy - futureY;
+    const futureX=mouseX+velX*12;
+    const futureY=mouseY+velY*12;
 
-    let len = Math.hypot(dx,dy) || 1;
+    let dx=cx-futureX;
+    let dy=cy-futureY;
 
-    dx /= len;
-    dy /= len;
+    let len=Math.hypot(dx,dy)||1;
 
-    const move = 140;
+    dx/=len;
+    dy/=len;
 
-    let newX = rect.left + dx * move;
-    let newY = rect.top + dy * move;
+    const move=180;
 
-    /* clamp inside screen */
-    newX = Math.max(0, Math.min(window.innerWidth - rect.width, newX));
-    newY = Math.max(0, Math.min(window.innerHeight - rect.height, newY));
+    let newX=rect.left+dx*move;
+    let newY=rect.top+dy*move;
 
-    noBtn.style.left = newX + "px";
-    noBtn.style.top = newY + "px";
-    noBtn.style.transform = "none";
+    newX=Math.max(0,Math.min(window.innerWidth-rect.width,newX));
+    newY=Math.max(0,Math.min(window.innerHeight-rect.height,newY));
+
+    noBtn.style.left=newX+"px";
+    noBtn.style.top=newY+"px";
+    noBtn.style.transform="none";
+
+    escaped = true; // ✅ LOCK POSITION AFTER ESCAPE
 
     tease++;
 
-    if(tease > 3) noBtn.innerText = "追不到我 😏";
-    if(tease > 8) noBtn.innerText = "再快一點 😂";
-    if(tease > 12) noBtn.innerText = "你其實想按願意 ❤️";
-
+    if(tease>2) noBtn.innerText="抓不到我 😏";
+    if(tease>6) noBtn.innerText="我不動了 😂";
+    if(tease>10) noBtn.innerText="快按願意 ❤️";
   }
 
 },50);
 
+}
+
+/* FLOW */
+function goFood(){
+  if(!date.value||!time.value) return alert("先選時間");
+  show(4);
+}
+
+function goActivity(){
+  if(!food.value) return alert("選吃的");
+  show(5);
+}
+
+function finish(){
+
+  if(!activity.value) return alert("選活動");
+
+  document.getElementById("summary").innerHTML=`
+    <p>📅 ${date.value}</p>
+    <p>⏰ ${time.value}</p>
+    <p>🍜 ${food.value}</p>
+    <p>🥰 ${activity.value}</p>
+  `;
+
+  show(6);
+
+  confetti({particleCount:250,spread:150});
 }
 
 </script>
