@@ -8,329 +8,375 @@
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 
 <style>
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:"Microsoft JhengHei",sans-serif;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Microsoft JhengHei", "Apple LiGothic Medium", sans-serif;
 }
 
-body{
-  height:100vh;
-  overflow:hidden;
-  background:linear-gradient(135deg,#ff8dc7,#ffb6d9,#ffd4e8);
-  display:flex;
-  justify-content:center;
-  align-items:center;
+body {
+  height: 100vh;
+  overflow: hidden;
+  background: linear-gradient(135deg, #ff8dc7, #ffb6d9, #ffe0ef);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-/* PAGE */
-.page{display:none;}
-.page.active{display:block;}
-
-.card{
-  background:rgba(255,255,255,0.92);
-  backdrop-filter:blur(12px);
-  padding:40px;
-  border-radius:28px;
-  width:min(600px,92vw);
-  text-align:center;
-  box-shadow:0 20px 50px rgba(0,0,0,0.18);
+/* PAGE MANAGEMENT */
+.page {
+  position: absolute;
+  opacity: 0;
+  transform: scale(0.95);
+  pointer-events: none;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-h1{color:#ff4f9b;}
-
-.typing{min-height:50px;font-size:18px;}
-
-/* BUTTON */
-button{
-  border:none;
-  cursor:pointer;
-  padding:14px 26px;
-  border-radius:999px;
-  font-size:18px;
+.page.active {
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: auto;
 }
 
-.yes{
-  background:#ff4f9b;
-  color:white;
-  margin-top:10px;
+.card {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  padding: 40px;
+  border-radius: 26px;
+  width: min(520px, 92vw);
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(233, 30, 99, 0.15);
 }
 
-.next{
-  background:#ff4f9b;
-  color:white;
-  margin-top:10px;
+h1 { 
+  color: #ff4f9b; 
+  margin-bottom: 16px;
+  font-size: 2rem;
 }
 
-input,select{
-  width:100%;
-  padding:12px;
-  border-radius:12px;
-  border:2px solid #ffd0e6;
-  margin-top:8px;
+p#typing {
+  font-size: 1.1rem;
+  color: #555;
+  min-height: 2.5rem;
+  line-height: 1.6;
 }
 
-/* ESCAPE BUTTON */
-.no{
-  position:fixed;
-  top:50%;
-  left:50%;
-  transform:translate(-50%,-50%);
-  background:white;
-  color:#ff4f9b;
-  border:2px solid #ff4f9b;
-  padding:12px 20px;
-  border-radius:999px;
-  z-index:999;
+/* INPUTS & SELECTS */
+input, select {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border: 2px solid #ffe0ef;
+  border-radius: 12px;
+  font-size: 16px;
+  color: #555;
+  outline: none;
+  transition: border-color 0.3s;
 }
 
-/* PHOTO */
-.final-img{
-  width:100%;
-  border-radius:16px;
-  margin-top:12px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.2);
+input:focus, select:focus {
+  border-color: #ff4f9b;
 }
 
-/* HEARTS */
-.heart{
-  position:fixed;
-  pointer-events:none;
-  animation:float 5s linear forwards;
+/* BUTTONS */
+button {
+  border: none;
+  cursor: pointer;
+  padding: 14px 28px;
+  border-radius: 999px;
+  font-size: 17px;
+  margin-top: 16px;
+  font-weight: bold;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
-@keyframes float{
-  from{transform:translateY(100vh);opacity:1;}
-  to{transform:translateY(-120px);opacity:0;}
+button:active {
+  transform: scale(0.95);
+}
+
+.primary {
+  background: #ff4f9b;
+  color: white;
+  box-shadow: 0 8px 20px rgba(255, 79, 155, 0.3);
+}
+
+.primary:hover {
+  background: #e63984;
+  box-shadow: 0 8px 25px rgba(255, 79, 155, 0.4);
+}
+
+/* SMART RUNAWAY BUTTON */
+#noBtn {
+  position: absolute;
+  /* Placed relatively near the "Yes" button initially */
+  top: calc(50% + 55px); 
+  left: calc(50% + 80px);
+  transform: translate(-50%, -50%);
+  background: white;
+  color: #ff4f9b;
+  border: 2px solid #ff4f9b;
+  z-index: 9999;
+  user-select: none;
+  /* Using JS positioning cleanly, avoiding rigid CSS transition delays */
+}
+
+/* FLOATING HEARTS */
+.heart {
+  position: fixed;
+  pointer-events: none;
+  z-index: 999;
+  font-size: 24px;
+  animation: float 4s linear forwards;
+}
+
+@keyframes float {
+  from {
+    transform: translateY(105vh) scale(0.5);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(-10vh) scale(1.2);
+    opacity: 0;
+  }
+}
+
+.final-img {
+  width: 100%;
+  max-height: 250px;
+  object-fit: cover;
+  border-radius: 16px;
+  margin-top: 20px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+#summary p {
+  margin: 8px 0;
+  font-size: 1.1rem;
+  color: #444;
 }
 </style>
 </head>
-
 <body>
 
 <audio id="bgm" loop>
-<source src="music.mp3">
+  <source src="music.mp3">
 </audio>
 
-<!-- PAGE 1 -->
-<div class="page active" id="page1">
+<div class="page active" id="p1">
   <div class="card">
     <h1>芸芸 ❤️</h1>
-    <div class="typing" id="typing"></div>
-    <button class="yes" onclick="startLove()">願意 ❤️</button>
+    <p id="typing"></p>
+    <button class="primary" id="yesBtn" onclick="start()">願意 ❤️</button>
   </div>
 </div>
 
-<!-- PAGE 2 -->
-<div class="page" id="page2">
+<div class="page" id="p2">
   <div class="card">
-    <h1>🥰 太好了</h1>
-    <button class="next" onclick="show(3)">下一步</button>
+    <h1>🥰 太棒了！</h1>
+    <p style="color:#666; margin-bottom:15px;">我就知道你會答應～</p>
+    <button class="primary" onclick="show(3)">下一步 📅</button>
   </div>
 </div>
 
-<!-- PAGE 3 -->
-<div class="page" id="page3">
+<div class="page" id="p3">
   <div class="card">
-    <h1>📅 約時間</h1>
+    <h1>📅 選擇日期與時間</h1>
     <input type="date" id="date">
     <input type="time" id="time">
-    <button class="next" onclick="goFood()">下一步</button>
+    <button class="primary" onclick="validateStep3()">下一步 🍜</button>
   </div>
 </div>
 
-<!-- PAGE 4 -->
-<div class="page" id="page4">
+<div class="page" id="p4">
   <div class="card">
-    <h1>🍜 吃什麼</h1>
+    <h1>🍜 想吃什麼呢？</h1>
     <select id="food">
-      <option value="">請選擇</option>
-      <option>火鍋</option>
-      <option>日料</option>
-      <option>韓式烤肉</option>
-      <option>西餐</option>
+      <option value="">請選擇美食...</option>
+      <option value="🍲 美滋滋的火鍋">火鍋</option>
+      <option value="🍣 精緻的日料">日料</option>
+      <option value="🥩 香噴噴的韓式烤肉">韓式烤肉</option>
     </select>
-    <button class="next" onclick="goActivity()">下一步</button>
+    <button class="primary" onclick="validateStep4()">下一步 🥰</button>
   </div>
 </div>
 
-<!-- PAGE 5 -->
-<div class="page" id="page5">
+<div class="page" id="p5">
   <div class="card">
-    <h1>🥰 行程</h1>
-    <select id="activity">
-      <option value="">請選擇</option>
-      <option>看電影</option>
-      <option>散步</option>
-      <option>咖啡廳</option>
-      <option>抓娃娃</option>
+    <h1>🥰 吃飽後想去哪？</h1>
+    <select id="act">
+      <option value="">請選擇行程...</option>
+      <option value="🎬 看一場浪漫的電影">看電影</option>
+      <option value="🌳 悠閒地散散步">散步</option>
+      <option value="☕ 找間舒服的咖啡廳聊天">咖啡廳</option>
     </select>
-    <button class="next" onclick="finish()">完成</button>
+    <button class="primary" onclick="finish()">生成我們的約會 ✨</button>
   </div>
 </div>
 
-<!-- PAGE 6 -->
-<div class="page" id="page6">
+<div class="page" id="p6">
   <div class="card">
-    <h1>❤️ 約會成立</h1>
-    <div id="summary"></div>
-    <img src="photo.jpeg" class="final-img">
+    <h1>❤️ 約會計畫達成！</h1>
+    <div id="summary" style="margin: 20px 0; text-align: left; background: #fff5f9; padding: 20px; border-radius: 16px;"></div>
+    <img src="photo.jpeg" class="final-img" alt="我們的照片">
   </div>
 </div>
 
-<!-- ESCAPE BUTTON -->
-<button class="no" id="noBtn">不願意 🙈</button>
+<button id="noBtn">不願意 🙈</button>
 
 <script>
+let accepted = false;
 
-let tease = 0;
-let escaped = false;
-
-const noBtn = document.getElementById("noBtn");
-
-/* TYPEWRITER */
-let text = "我想跟你去一個很普通，但很重要的約會 ❤️";
+/* TYPING EFFECT */
+const text = "我想跟你去一個很普通，但很重要的約會 ❤️";
 let i = 0;
-
-function type(){
-  if(i < text.length){
+function type() {
+  if (i < text.length) {
     document.getElementById("typing").innerHTML += text[i++];
-    setTimeout(type,60);
+    setTimeout(type, 75);
   }
 }
-type();
+window.onload = type;
 
-/* PAGE SYSTEM */
-function show(n){
-  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
-  document.getElementById("page"+n).classList.add("active");
+/* PAGE NAVIGATION */
+function show(n) {
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  document.getElementById("p" + n).classList.add("active");
 }
 
-/* START */
-function startLove(){
-
-  document.getElementById("bgm").play().catch(()=>{});
-
-  for(let i=0;i<80;i++){
-    setTimeout(()=>{
-      let h=document.createElement("div");
-      h.className="heart";
-      h.innerHTML=["❤️","💖","💕"][Math.floor(Math.random()*3)];
-      h.style.left=Math.random()*100+"vw";
-      document.body.appendChild(h);
-      setTimeout(()=>h.remove(),5000);
-    },i*20);
+/* VALIDATIONS */
+function validateStep3() {
+  if (!document.getElementById("date").value || !document.getElementById("time").value) {
+    alert("請先選擇時間和日期唷 📅");
+    return;
   }
-
-  show(2);
-}
-
-/* MOBILE */
-const isTouch =
-  "ontouchstart" in window ||
-  navigator.maxTouchPoints > 0;
-
-if(isTouch){
-  noBtn.addEventListener("click",()=>{
-    alert("你明明就願意 ❤️");
-  });
-}
-
-/* DESKTOP ESCAPE (ONCE THEN FREEZE) */
-else{
-
-let mouseX=0, mouseY=0;
-let lastX=0, lastY=0;
-let velX=0, velY=0;
-
-document.addEventListener("mousemove",(e)=>{
-  mouseX=e.clientX;
-  mouseY=e.clientY;
-
-  velX=mouseX-lastX;
-  velY=mouseY-lastY;
-
-  lastX=mouseX;
-  lastY=mouseY;
-});
-
-setInterval(()=>{
-
-  if(escaped) return; // 🚨 FREEZE AFTER FIRST ESCAPE
-
-  const rect=noBtn.getBoundingClientRect();
-
-  const cx=rect.left+rect.width/2;
-  const cy=rect.top+rect.height/2;
-
-  const dist=Math.hypot(mouseX-cx,mouseY-cy);
-
-  if(dist<180){
-
-    const futureX=mouseX+velX*12;
-    const futureY=mouseY+velY*12;
-
-    let dx=cx-futureX;
-    let dy=cy-futureY;
-
-    let len=Math.hypot(dx,dy)||1;
-
-    dx/=len;
-    dy/=len;
-
-    const move=180;
-
-    let newX=rect.left+dx*move;
-    let newY=rect.top+dy*move;
-
-    newX=Math.max(0,Math.min(window.innerWidth-rect.width,newX));
-    newY=Math.max(0,Math.min(window.innerHeight-rect.height,newY));
-
-    noBtn.style.left=newX+"px";
-    noBtn.style.top=newY+"px";
-    noBtn.style.transform="none";
-
-    escaped = true; // ✅ LOCK POSITION AFTER ESCAPE
-
-    tease++;
-
-    if(tease>2) noBtn.innerText="抓不到我 😏";
-    if(tease>6) noBtn.innerText="我不動了 😂";
-    if(tease>10) noBtn.innerText="快按願意 ❤️";
-  }
-
-},50);
-
-}
-
-/* FLOW */
-function goFood(){
-  if(!date.value||!time.value) return alert("先選時間");
   show(4);
 }
 
-function goActivity(){
-  if(!food.value) return alert("選吃的");
+function validateStep4() {
+  if (!document.getElementById("food").value) {
+    alert("挑一個你想吃的吧 🍜");
+    return;
+  }
   show(5);
 }
 
-function finish(){
+/* START (YES CLICKED) */
+function start() {
+  accepted = true;
+  const noBtn = document.getElementById("noBtn");
+  if(noBtn) noBtn.remove(); // Instantly remove the runaway button
 
-  if(!activity.value) return alert("選活動");
+  // Play Audio
+  document.getElementById("bgm").play().catch(() => {});
 
-  document.getElementById("summary").innerHTML=`
-    <p>📅 ${date.value}</p>
-    <p>⏰ ${time.value}</p>
-    <p>🍜 ${food.value}</p>
-    <p>🥰 ${activity.value}</p>
+  // Heart Rain Burst
+  for (let i = 0; i < 50; i++) {
+    setTimeout(() => {
+      let h = document.createElement("div");
+      h.className = "heart";
+      h.innerHTML = ["❤️", "💖", "💝", "💕"][Math.floor(Math.random() * 4)];
+      h.style.left = Math.random() * 100 + "vw";
+      h.style.animationDelay = Math.random() * 0.5 + "s";
+      document.body.appendChild(h);
+      setTimeout(() => h.remove(), 4000);
+    }, i * 30);
+  }
+
+  // Confetti celebration
+  confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
+  show(2);
+}
+
+/* FINISH */
+function finish() {
+  const dateVal = document.getElementById("date").value;
+  const timeVal = document.getElementById("time").value;
+  const foodVal = document.getElementById("food").value;
+  const actVal = document.getElementById("act").value;
+
+  if (!actVal) return alert("選個想去的活動吧 🥰");
+
+  document.getElementById("summary").innerHTML = `
+    <p><strong>📅 日期：</strong> ${dateVal}</p>
+    <p><strong>⏰ 時間：</strong> ${timeVal}</p>
+    <p><strong>🍜 美食：</strong> ${foodVal}</p>
+    <p><strong>✨ 行程：</strong> ${actVal}</p>
   `;
 
   show(6);
+  
+  // Continuous celebration confetti
+  let duration = 3 * 1000;
+  let end = Date.now() + duration;
 
-  confetti({particleCount:250,spread:150});
+  (function frame() {
+    confetti({ particleCount: 3, angle: 60, spread: 55, origin: { x: 0 } });
+    confetti({ particleCount: 3, angle: 120, spread: 55, origin: { x: 1 } });
+    if (Date.now() < end) { requestAnimationFrame(frame); }
+  }());
 }
 
+/* =======================================
+   ✨ FIXED & IMPROVED RUNAWAY BUTTON ✨
+======================================= */
+const noBtn = document.getElementById("noBtn");
+
+// Hide the "No" button dynamically if we advance past page 1 via alternate methods
+function checkBtnVisibility() {
+  const p1 = document.getElementById("p1");
+  if (!p1.classList.contains("active") || accepted) {
+    noBtn.style.display = "none";
+  } else {
+    noBtn.style.display = "block";
+  }
+}
+
+// Track mouse positioning smoothly
+document.addEventListener("mousemove", (e) => {
+  if (accepted || noBtn.style.display === "none") return;
+
+  const btnRect = noBtn.getBoundingClientRect();
+  
+  // Calculate center of button
+  const btnX = btnRect.left + btnRect.width / 2;
+  const btnY = btnRect.top + btnRect.height / 2;
+
+  // Distance between mouse pointer and button center
+  const mouseX = e.clientX;
+  const mouseY = e.clientY;
+  const distance = Math.sqrt(Math.pow(mouseX - btnX, 2) + Math.pow(mouseY - btnY, 2));
+
+  // If the cursor is within 130px, teleport away safely inside viewports
+  if (distance < 130) {
+    // Generate a brand new, random safe position on screen
+    const padding = 60;
+    const maxX = window.innerWidth - btnRect.width - padding;
+    const maxY = window.innerHeight - btnRect.height - padding;
+
+    let randomX = Math.random() * (maxX - padding) + padding;
+    let randomY = Math.random() * (maxY - padding) + padding;
+
+    // Prevent it from accidentally jumping directly under the cursor's current position
+    if (Math.abs(randomX - mouseX) < 100 && Math.abs(randomY - mouseY) < 100) {
+      randomX += randomX < window.innerWidth / 2 ? 150 : -150;
+    }
+
+    noBtn.style.left = randomX + "px";
+    noBtn.style.top = randomY + "px";
+  }
+});
+
+// Fallback click handler if they somehow manage to touch it on mobile tap
+noBtn.addEventListener("click", () => {
+  alert("被你抓到了！但你其實是願意的對吧 😏");
+  start();
+});
+
+// Observe page changes to clear the button on success
+const observer = new MutationObserver(checkBtnVisibility);
+observer.observe(document.getElementById("p1"), { attributes: true, attributeFilter: ['class'] });
 </script>
 
 </body>
