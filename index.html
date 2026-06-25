@@ -96,7 +96,7 @@ p.desc {
   border: 1px solid rgba(255, 79, 155, 0.15);
 }
 
-input[type="date"], input[type="time"], select {
+input[type="date"], select {
   width: 100%;
   padding: 14px 18px;
   margin: 8px 0;
@@ -110,9 +110,7 @@ input[type="date"], input[type="time"], select {
   cursor: pointer;
 }
 
-/* Native Picker Icon Tinting & Polish */
-input[type="date"]::-webkit-calendar-picker-indicator,
-input[type="time"]::-webkit-calendar-picker-indicator {
+input[type="date"]::-webkit-calendar-picker-indicator {
   background-color: transparent;
   cursor: pointer;
   filter: invert(47%) sepia(85%) saturate(1912%) hue-rotate(309deg) brightness(101%) contrast(101%);
@@ -216,7 +214,7 @@ button {
 
 <div class="container">
   <div class="page active" id="p1">
-    <h1>芸芸 ❤️</h1>
+    <h1>芸芸 🫶</h1>
     <p class="desc" id="typing"></p>
     <div class="btn-group">
       <button class="primary" id="yesBtn" onclick="start()">願意 ❤️</button>
@@ -225,44 +223,50 @@ button {
   </div>
 
   <div class="page" id="p2">
-    <h1>🥰 太棒了！</h1>
-    <p class="desc">我就知道妳會答應，嘻嘻。那我們開始規畫行程吧！</p>
+    <h1>🫣 什麽？！</h1>
+    <p class="desc">哇哇哇 芸芸答應我了 好害羞 😳</p>
     <button class="primary" onclick="show(3)">下一步 📅</button>
   </div>
 
   <div class="page" id="p3">
-    <h1>📅 挑個日子吧</h1>
+    <h1>📅 芸芸幾時得空呢？</h1>
     <div class="datetime-wrapper">
       <input type="date" id="date">
-      <input type="time" id="time">
+      <select id="time">
+        <option value="">請選擇出發時間...</option>
+      </select>
     </div>
     <button class="primary" onclick="validateStep3()">下一步 🍜</button>
   </div>
 
   <div class="page" id="p4">
-    <h1>🍜 想吃什麼呢？</h1>
+    <h1>🍜 芸芸想吃什麼呢？</h1>
     <select id="food">
       <option value="">請選擇專屬美食...</option>
-      <option value="🍲 暖呼呼的美味火鍋">暖呼呼的火鍋</option>
-      <option value="🍣 精緻美味的日式料理">精緻的日料</option>
-      <option value="🥩 飽足感十足的韓式烤肉">韓式烤肉</option>
+      <option value="🍣 OMAKASE 哈哈哈">OMAKASE 哈哈哈 🍣</option>
+      <option value="🍔 麥當當">麥當當 🍔</option>
+      <option value="🍲 海底撈">海底撈 🍲</option>
+      <option value="🥗 c:ontent grain bowl">c:ontent grain bowl 🥗</option>
+      <option value="🍨 本宮的茶">本宮的茶 🍨</option>
     </select>
     <button class="primary" onclick="validateStep4()">下一步 🥰</button>
   </div>
 
   <div class="page" id="p5">
-    <h1>🥰 想去哪邊散心？</h1>
+    <h1>🥰 芸芸飯後想去哪呢？</h1>
     <select id="act">
       <option value="">請選擇浪漫行程...</option>
-      <option value="🎬 看一場好看的精采電影">浪漫看電影</option>
-      <option value="🌳 牽著手悠閒地散散步">牽手散散步</option>
-      <option value="☕ 找間很有氛圍的咖啡廳聊天">氣氛咖啡廳</option>
+      <option value="🎬 浪漫看電影">浪漫看電影 🎬</option>
+      <option value="🌳 牽著手悠閒地散散步">牽手散散步 🌳</option>
+      <option value="🏎️ 刺激卡丁車">刺激卡丁車 🏎️</option>
+      <option value="⛳ 打高爾夫球">打高爾夫球 ⛳</option>
+      <option value="🎡 去遊樂園玩">去遊樂園玩 🎡</option>
     </select>
     <button class="primary" onclick="finish()">完成約會計畫 ✨</button>
   </div>
 
   <div class="page" id="p6">
-    <h1>❤️ 約會預約成功！</h1>
+    <h1>❤️ 約會預約成功！我要去載芸芸了嘿嘿 ❤️</h1>
     <div id="summary"></div>
     <img src="photo.jpeg" class="final-img" alt="我們的相片">
   </div>
@@ -273,8 +277,24 @@ button {
 <script>
 let accepted = false;
 
+/* GENERATE 30-MINUTE INTERVALS DYNAMICALLY */
+function populateTimeDropdown() {
+  const timeSelect = document.getElementById("time");
+  for (let hour = 0; hour < 24; hour++) {
+    for (let min of ["00", "30"]) {
+      let formattedHour = hour.toString().padStart(2, '0');
+      let timeValue = `${formattedHour}:${min}`;
+      let opt = document.createElement("option");
+      opt.value = timeValue;
+      opt.textContent = timeValue;
+      timeSelect.appendChild(opt);
+    }
+  }
+}
+window.addEventListener('DOMContentLoaded', populateTimeDropdown);
+
 /* TYPING EFFECT */
-const text = "我想跟你去一個很普通，但很重要的約會 ❤️";
+const text = "願不願意一起出去玩嘿嘿 😳";
 let charIndex = 0;
 function type() {
   if (charIndex < text.length) {
@@ -299,11 +319,9 @@ function validateStep3() {
     return alert("請先填寫日期與時間唷 📅");
   }
 
-  // Construct selected JavaScript Date object
   const selectedDateTime = new Date(`${dateVal}T${timeVal}`);
   const currentDateTime = new Date();
 
-  // If selected timestamp is in the past
   if (selectedDateTime < currentDateTime) {
     return alert("我們是要搭時光機嗎嘿嘿 ✈️");
   }
