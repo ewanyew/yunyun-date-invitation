@@ -107,6 +107,8 @@ input[type="date"], select {
   border: 2px solid #fff0f6;
   border-radius: 16px;
   font-size: 16px;
+  line-height: 1.2;
+  height: 52px; 
   color: #4a3e43;
   background: rgba(255, 255, 255, 0.8);
   outline: none;
@@ -118,6 +120,19 @@ input[type="date"], select {
   appearance: none;
   box-sizing: border-box;
   max-width: 100%;
+}
+
+/* IOS SAFARI DATE PLACEHOLDER FIX */
+input[type="date"]::before {
+  content: "請選擇出發日期 📅";
+  width: 100%;
+  color: #a3979d;
+}
+
+input[type="date"]:focus::before,
+input[type="date"]:valid::before {
+  display: none !important;
+  content: "" !important;
 }
 
 input[type="date"]::-webkit-calendar-picker-indicator {
@@ -241,7 +256,7 @@ button {
   <div class="page" id="p3">
     <h1>📅 芸芸幾時得空呢？</h1>
     <div class="datetime-wrapper">
-      <input type="date" id="date">
+      <input type="date" id="date" required>
       <select id="time">
         <option value="">請選擇出發時間...</option>
       </select>
@@ -500,7 +515,6 @@ let alertIndex = 0;
 
 btn.addEventListener("click", () => {
   alert(noAlerts[alertIndex]);
-  // Move to next message, loop back to start if she reaches the end
   alertIndex = (alertIndex + 1) % noAlerts.length;
 });
 </script>
