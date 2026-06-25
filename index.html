@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>給芸芸 ❤️</title>
+<title>芸芸 ❤️</title>
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 
@@ -151,19 +151,35 @@ input:focus, select:focus {
 .btn-group {
   display: flex;
   justify-content: center;
+  align-items: center;
   gap: 20px;
   margin-top: 20px;
   min-height: 50px;
+  width: 100%;
+  max-width: 320px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* FIXED EQUAL WIDTH AND CENTERING RULE ENGINE */
+button, #noBtn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-sizing: border-box !important;
+  height: 50px !important;
+  width: 140px !important; /* Forces uniform explicit desktop sizing */
+  padding: 0 !important;
+  border-radius: 20px !important;
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  text-align: center !important;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 button {
-  border: none;
-  cursor: pointer;
-  padding: 14px 32px;
-  border-radius: 20px;
-  font-size: 16px;
-  font-weight: 700;
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  border: 2px solid transparent !important;
 }
 
 .primary {
@@ -184,11 +200,27 @@ button {
   z-index: 9999;
   background: white;
   color: var(--primary);
-  border: 2px solid var(--primary);
-  padding: 14px 32px;
-  border-radius: 20px;
+  border: 2px solid var(--primary) !important;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
   will-change: left, top;
+}
+
+/* RESPONSIVE LAYOUT CLEANUP FOR PHONE SCREENS */
+@media (max-width: 768px) {
+  .btn-group {
+    max-width: 100%;
+  }
+  #yesBtn, #noBtn {
+    flex: 1 !important; /* Tells them to grow equally and occupy identical splits of the container */
+    width: auto !important;
+  }
+  #noBtn {
+    position: static !important; /* Pushes into flex flow seamlessly */
+    box-shadow: none;
+  }
+  #noPlaceholder {
+    display: none !important;
+  }
 }
 
 /* FLOATING HEARTS COUTURE */
@@ -243,14 +275,14 @@ button {
     <p class="desc" id="typing"></p>
     <div class="btn-group">
       <button class="primary" id="yesBtn" onclick="start()">願意 ❤️</button>
-      <div style="width: 110px;" id="noPlaceholder"></div> 
+      <div style="width: 140px;" id="noPlaceholder"></div> 
     </div>
   </div>
 
   <div class="page" id="p2">
     <h1>🫣 什麽？！</h1>
     <p class="desc">哇哇哇 芸芸答應我了 好害羞 😳</p>
-    <button class="primary" onclick="show(3)">下一步 📅</button>
+    <button class="primary" onclick="show(3)">下一步 🥰</button>
   </div>
 
   <div class="page" id="p3">
@@ -261,7 +293,7 @@ button {
         <option value="">請選擇出發時間...</option>
       </select>
     </div>
-    <button class="primary" onclick="validateStep3()">下一步 🍜</button>
+    <button class="primary" onclick="validateStep3()">下一步 🥰</button>
   </div>
 
   <div class="page" id="p4">
@@ -287,11 +319,11 @@ button {
       <option value="⛳ 打高爾夫球">打高爾夫球 ⛳</option>
       <option value="🎡 去遊樂園玩">去遊樂園玩 🎡</option>
     </select>
-    <button class="primary" onclick="finish()">完成約會計畫 ✨</button>
+    <button class="primary" onclick="finish()">完成 🥰</button>
   </div>
 
   <div class="page" id="p6">
-    <h1>約會預約成功 ❤️ 要去載芸芸了嘿嘿</h1>
+    <h1>預約成功 ❤️ 要去載芸芸了</h1>
     <div id="summary"></div>
     <img src="photo.jpeg" class="final-img" alt="我們的相片">
   </div>
@@ -409,6 +441,7 @@ function finish() {
 ======================================================== */
 const btn = document.getElementById("noBtn");
 const yesBtn = document.getElementById("yesBtn");
+const btnGroup = document.querySelector(".btn-group");
 
 let btnX = 0, btnY = 0;         
 let velX = 0, velY = 0;         
@@ -428,8 +461,30 @@ function updateHomePosition() {
   homeY = yesRect.top;
 }
 
+function handleMobileDomMigration() {
+  if (window.innerWidth <= 768) {
+    if (btn.parentNode !== btnGroup) {
+      btnGroup.appendChild(btn);
+    }
+  } else {
+    if (btn.parentNode !== document.body) {
+      document.body.appendChild(btn);
+      isInitialized = false;
+    }
+  }
+}
+
 function updatePhysics() {
   if (accepted) return;
+
+  handleMobileDomMigration();
+
+  if (window.innerWidth <= 768) {
+    const p1 = document.getElementById("p1");
+    btn.style.display = (!p1.classList.contains("active")) ? "none" : "inline-flex";
+    requestAnimationFrame(updatePhysics);
+    return;
+  }
 
   updateHomePosition();
 
