@@ -5,378 +5,429 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>給芸芸 ❤️</title>
 
+<!-- Canvas Confetti for Celebrations -->
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 
 <style>
+:root {
+  --primary: #ff4f9b;
+  --primary-hover: #ff2a82;
+  --bg-gradient: linear-gradient(135deg, #ffeef7 0%, #ffb6d9 50%, #ffd3ea 100%);
+  --card-bg: rgba(255, 255, 255, 0.88);
+  --shadow: 0 20px 50px rgba(255, 79, 155, 0.15);
+}
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Microsoft JhengHei", "Apple LiGothic Medium", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Microsoft JhengHei", sans-serif;
 }
 
 body {
   height: 100vh;
+  width: 100vw;
   overflow: hidden;
-  background: linear-gradient(135deg, #ff8dc7, #ffb6d9, #ffe0ef);
+  background: var(--bg-gradient);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  perspective: 1000px;
+}
+
+/* CONTAINER & PAGE ANIMATIONS */
+.container {
+  position: relative;
+  width: min(500px, 92vw);
+  height: 420px;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-/* PAGE MANAGEMENT */
 .page {
   position: absolute;
+  width: 100%;
+  background: var(--card-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 40px 30px;
+  border-radius: 30px;
+  text-align: center;
+  box-shadow: var(--shadow);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  
+  /* Smooth Page Transitions */
   opacity: 0;
-  transform: scale(0.95);
+  visibility: hidden;
+  transform: translateY(30px) scale(0.95) rotateX(10deg);
+  transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
   pointer-events: none;
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .page.active {
   opacity: 1;
-  transform: scale(1);
+  visibility: visible;
+  transform: translateY(0) scale(1) rotateX(0deg);
   pointer-events: auto;
+  z-index: 10;
 }
 
-.card {
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  padding: 40px;
-  border-radius: 26px;
-  width: min(520px, 92vw);
-  text-align: center;
-  box-shadow: 0 20px 60px rgba(233, 30, 99, 0.15);
-}
-
-h1 { 
-  color: #ff4f9b; 
-  margin-bottom: 16px;
+/* TYPOGRAPHY */
+h1 {
+  color: var(--primary);
   font-size: 2rem;
+  margin-bottom: 20px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
 }
 
-p#typing {
+p.desc {
   font-size: 1.1rem;
-  color: #555;
-  min-height: 2.5rem;
+  color: #605359;
   line-height: 1.6;
+  min-height: 54px;
 }
 
-/* INPUTS & SELECTS */
+/* UI ELEMENTS */
 input, select {
   width: 100%;
-  padding: 12px;
-  margin: 10px 0;
-  border: 2px solid #ffe0ef;
-  border-radius: 12px;
+  padding: 14px 18px;
+  margin: 12px 0;
+  border: 2px solid #fff0f6;
+  border-radius: 16px;
   font-size: 16px;
-  color: #555;
+  color: #4a3e43;
+  background: rgba(255, 255, 255, 0.7);
   outline: none;
-  transition: border-color 0.3s;
+  transition: all 0.3s ease;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
 }
 
 input:focus, select:focus {
-  border-color: #ff4f9b;
+  border-color: var(--primary);
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(255, 79, 155, 0.15);
 }
 
 /* BUTTONS */
 button {
   border: none;
   cursor: pointer;
-  padding: 14px 28px;
-  border-radius: 999px;
-  font-size: 17px;
-  margin-top: 16px;
-  font-weight: bold;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-button:active {
-  transform: scale(0.95);
+  padding: 14px 32px;
+  border-radius: 20px;
+  font-size: 16px;
+  font-weight: 700;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 .primary {
-  background: #ff4f9b;
+  background: var(--primary);
   color: white;
   box-shadow: 0 8px 20px rgba(255, 79, 155, 0.3);
 }
 
 .primary:hover {
-  background: #e63984;
-  box-shadow: 0 8px 25px rgba(255, 79, 155, 0.4);
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(255, 79, 155, 0.4);
 }
 
-/* SMART RUNAWAY BUTTON */
+.primary:active {
+  transform: translateY(1px);
+}
+
+/* PREMIUM SMOOTH ESCAPE BUTTON */
 #noBtn {
-  position: absolute;
-  /* Placed relatively near the "Yes" button initially */
-  top: calc(50% + 55px); 
-  left: calc(50% + 80px);
-  transform: translate(-50%, -50%);
-  background: white;
-  color: #ff4f9b;
-  border: 2px solid #ff4f9b;
+  position: fixed;
   z-index: 9999;
-  user-select: none;
-  /* Using JS positioning cleanly, avoiding rigid CSS transition delays */
+  background: white;
+  color: var(--primary);
+  border: 2px solid var(--primary);
+  padding: 12px 26px;
+  box-shadow: 0 8px 20px rgba(0,0, 0, 0.05);
+  will-change: left, top; /* Optimizes browser rendering engine */
 }
 
-/* FLOATING HEARTS */
+/* FLOATING HEARTS COUTURE */
 .heart {
   position: fixed;
   pointer-events: none;
-  z-index: 999;
+  z-index: 99;
   font-size: 24px;
-  animation: float 4s linear forwards;
+  will-change: transform;
+  animation: floatUp 4.5s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
 }
 
-@keyframes float {
-  from {
-    transform: translateY(105vh) scale(0.5);
-    opacity: 1;
-  }
-  to {
-    transform: translateY(-10vh) scale(1.2);
-    opacity: 0;
-  }
+@keyframes floatUp {
+  0% { transform: translateY(105vh) scale(0.3) rotate(0deg); opacity: 0; }
+  15% { opacity: 0.9; }
+  100% { transform: translateY(-15vh) scale(1.2) rotate(360deg); opacity: 0; }
 }
 
 .final-img {
   width: 100%;
-  max-height: 250px;
+  height: 180px;
   object-fit: cover;
-  border-radius: 16px;
-  margin-top: 20px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  border-radius: 20px;
+  margin-top: 15px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+}
+
+#summary {
+  background: rgba(255, 79, 155, 0.04);
+  border: 1px dashed rgba(255, 79, 155, 0.25);
+  border-radius: 20px;
+  padding: 18px;
+  text-align: left;
+  margin: 15px 0;
 }
 
 #summary p {
-  margin: 8px 0;
-  font-size: 1.1rem;
-  color: #444;
+  margin: 6px 0;
+  font-size: 1rem;
+  color: #504248;
 }
 </style>
 </head>
 <body>
 
-<audio id="bgm" loop>
-  <source src="music.mp3">
-</audio>
+<audio id="bgm" loop><source src="music.mp3"></audio>
 
-<div class="page active" id="p1">
-  <div class="card">
+<div class="container">
+  <!-- PAGE 1 -->
+  <div class="page active" id="p1">
     <h1>芸芸 ❤️</h1>
-    <p id="typing"></p>
+    <p class="desc" id="typing"></p>
     <button class="primary" id="yesBtn" onclick="start()">願意 ❤️</button>
   </div>
-</div>
 
-<div class="page" id="p2">
-  <div class="card">
+  <!-- PAGE 2 -->
+  <div class="page" id="p2">
     <h1>🥰 太棒了！</h1>
-    <p style="color:#666; margin-bottom:15px;">我就知道你會答應～</p>
+    <p class="desc">我就知道妳會答應，嘻嘻。那我們開始規畫行程吧！</p>
     <button class="primary" onclick="show(3)">下一步 📅</button>
   </div>
-</div>
 
-<div class="page" id="p3">
-  <div class="card">
-    <h1>📅 選擇日期與時間</h1>
+  <!-- PAGE 3 -->
+  <div class="page" id="p3">
+    <h1>📅 挑個日子吧</h1>
     <input type="date" id="date">
     <input type="time" id="time">
     <button class="primary" onclick="validateStep3()">下一步 🍜</button>
   </div>
-</div>
 
-<div class="page" id="p4">
-  <div class="card">
+  <!-- PAGE 4 -->
+  <div class="page" id="p4">
     <h1>🍜 想吃什麼呢？</h1>
     <select id="food">
-      <option value="">請選擇美食...</option>
-      <option value="🍲 美滋滋的火鍋">火鍋</option>
-      <option value="🍣 精緻的日料">日料</option>
-      <option value="🥩 香噴噴的韓式烤肉">韓式烤肉</option>
+      <option value="">請選擇專屬美食...</option>
+      <option value="🍲 暖呼呼的美味火鍋">暖呼呼的火鍋</option>
+      <option value="🍣 精緻美味的日式料理">精緻的日料</option>
+      <option value="🥩 飽足感十足的韓式烤肉">韓式烤肉</option>
     </select>
     <button class="primary" onclick="validateStep4()">下一步 🥰</button>
   </div>
-</div>
 
-<div class="page" id="p5">
-  <div class="card">
-    <h1>🥰 吃飽後想去哪？</h1>
+  <!-- PAGE 5 -->
+  <div class="page" id="p5">
+    <h1>🥰 想去哪邊散心？</h1>
     <select id="act">
-      <option value="">請選擇行程...</option>
-      <option value="🎬 看一場浪漫的電影">看電影</option>
-      <option value="🌳 悠閒地散散步">散步</option>
-      <option value="☕ 找間舒服的咖啡廳聊天">咖啡廳</option>
+      <option value="">請選擇浪漫行程...</option>
+      <option value="🎬 看一場好看的精采電影">浪漫看電影</option>
+      <option value="🌳 牽著手悠閒地散散步">牽手散散步</option>
+      <option value="☕ 找間很有氛圍的咖啡廳聊天">氣氛咖啡廳</option>
     </select>
-    <button class="primary" onclick="finish()">生成我們的約會 ✨</button>
+    <button class="primary" onclick="finish()">完成約會計畫 ✨</button>
+  </div>
+
+  <!-- PAGE 6 -->
+  <div class="page" id="p6">
+    <h1>❤️ 約會預約成功！</h1>
+    <div id="summary"></div>
+    <img src="photo.jpeg" class="final-img" alt="我們的相片">
   </div>
 </div>
 
-<div class="page" id="p6">
-  <div class="card">
-    <h1>❤️ 約會計畫達成！</h1>
-    <div id="summary" style="margin: 20px 0; text-align: left; background: #fff5f9; padding: 20px; border-radius: 16px;"></div>
-    <img src="photo.jpeg" class="final-img" alt="我們的照片">
-  </div>
-</div>
-
+<!-- SMOOTH ESCAPE BUTTON -->
 <button id="noBtn">不願意 🙈</button>
 
 <script>
 let accepted = false;
 
-/* TYPING EFFECT */
+/* SILKY TYPING EFFECT */
 const text = "我想跟你去一個很普通，但很重要的約會 ❤️";
-let i = 0;
+let charIndex = 0;
 function type() {
-  if (i < text.length) {
-    document.getElementById("typing").innerHTML += text[i++];
-    setTimeout(type, 75);
+  if (charIndex < text.length) {
+    document.getElementById("typing").innerHTML += text[charIndex++];
+    setTimeout(type, 70);
   }
 }
-window.onload = type;
+window.addEventListener('DOMContentLoaded', type);
 
-/* PAGE NAVIGATION */
+/* NAVIGATION CONTROL */
 function show(n) {
   document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
   document.getElementById("p" + n).classList.add("active");
 }
 
-/* VALIDATIONS */
 function validateStep3() {
-  if (!document.getElementById("date").value || !document.getElementById("time").value) {
-    alert("請先選擇時間和日期唷 📅");
-    return;
-  }
+  if (!document.getElementById("date").value || !document.getElementById("time").value) return alert("請先填寫日期與時間唷 📅");
   show(4);
 }
 
 function validateStep4() {
-  if (!document.getElementById("food").value) {
-    alert("挑一個你想吃的吧 🍜");
-    return;
-  }
+  if (!document.getElementById("food").value) return alert("選一個妳想品嚐的美食吧 🍜");
   show(5);
 }
 
-/* START (YES CLICKED) */
+/* START PROCESS (YES CLICKED) */
 function start() {
   accepted = true;
   const noBtn = document.getElementById("noBtn");
-  if(noBtn) noBtn.remove(); // Instantly remove the runaway button
+  if(noBtn) noBtn.remove();
 
-  // Play Audio
   document.getElementById("bgm").play().catch(() => {});
 
-  // Heart Rain Burst
-  for (let i = 0; i < 50; i++) {
+  // Gorgeous Smooth Heart Burst
+  for (let i = 0; i < 45; i++) {
     setTimeout(() => {
       let h = document.createElement("div");
       h.className = "heart";
       h.innerHTML = ["❤️", "💖", "💝", "💕"][Math.floor(Math.random() * 4)];
       h.style.left = Math.random() * 100 + "vw";
-      h.style.animationDelay = Math.random() * 0.5 + "s";
+      h.style.fontSize = (Math.random() * 16 + 16) + "px";
       document.body.appendChild(h);
-      setTimeout(() => h.remove(), 4000);
-    }, i * 30);
+      setTimeout(() => h.remove(), 4500);
+    }, i * 40);
   }
 
-  // Confetti celebration
-  confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
+  confetti({ particleCount: 160, spread: 80, origin: { y: 0.6 } });
   show(2);
 }
 
-/* FINISH */
+/* FINISH APPLICATION */
 function finish() {
-  const dateVal = document.getElementById("date").value;
-  const timeVal = document.getElementById("time").value;
-  const foodVal = document.getElementById("food").value;
-  const actVal = document.getElementById("act").value;
-
-  if (!actVal) return alert("選個想去的活動吧 🥰");
+  if (!document.getElementById("act").value) return alert("挑選一個活動吧 🥰");
 
   document.getElementById("summary").innerHTML = `
-    <p><strong>📅 日期：</strong> ${dateVal}</p>
-    <p><strong>⏰ 時間：</strong> ${timeVal}</p>
-    <p><strong>🍜 美食：</strong> ${foodVal}</p>
-    <p><strong>✨ 行程：</strong> ${actVal}</p>
+    <p><strong>📅 日期：</strong> ${document.getElementById("date").value}</p>
+    <p><strong>⏰ 時間：</strong> ${document.getElementById("time").value}</p>
+    <p><strong>🍜 餐廳：</strong> ${document.getElementById("food").value}</p>
+    <p><strong>✨ 活動：</strong> ${document.getElementById("act").value}</p>
   `;
 
   show(6);
-  
-  // Continuous celebration confetti
-  let duration = 3 * 1000;
-  let end = Date.now() + duration;
 
+  // Side-fountains of confetti
+  let end = Date.now() + (3 * 1000);
   (function frame() {
     confetti({ particleCount: 3, angle: 60, spread: 55, origin: { x: 0 } });
     confetti({ particleCount: 3, angle: 120, spread: 55, origin: { x: 1 } });
-    if (Date.now() < end) { requestAnimationFrame(frame); }
+    if (Date.now() < end) requestAnimationFrame(frame);
   }());
 }
 
-/* =======================================
-   ✨ FIXED & IMPROVED RUNAWAY BUTTON ✨
-======================================= */
-const noBtn = document.getElementById("noBtn");
+/* ========================================================
+   🧠 HIGH-PERFORMANCE VELOCITY RUNAWAY PHYSICS ENGINE
+======================================================== */
+const btn = document.getElementById("noBtn");
+const yesBtn = document.getElementById("yesBtn");
 
-// Hide the "No" button dynamically if we advance past page 1 via alternate methods
-function checkBtnVisibility() {
-  const p1 = document.getElementById("p1");
-  if (!p1.classList.contains("active") || accepted) {
-    noBtn.style.display = "none";
-  } else {
-    noBtn.style.display = "block";
-  }
+// Core Physics Tracking Variables
+let btnX = 0, btnY = 0;         // Dynamic Target Coordinates
+let velX = 0, velY = 0;         // Instant Vector Velocity
+let mouseX = 0, mouseY = 0;     // Current Cursor Tracking
+let isInitialized = false;
+
+// Record real-time mouse position
+document.addEventListener("mousemove", (e) => {
+  mouseX = e.clientX;
+  mouseY = e.clientY;
+});
+
+// Setup initial coordinates safely relative to the centered card
+function initButtonPosition() {
+  const yesRect = yesBtn.getBoundingClientRect();
+  btnX = yesRect.right + 30; 
+  btnY = yesRect.top - 2;
+  btn.style.left = btnX + "px";
+  btn.style.top = btnY + "px";
+  isInitialized = true;
 }
 
-// Track mouse positioning smoothly
-document.addEventListener("mousemove", (e) => {
-  if (accepted || noBtn.style.display === "none") return;
-
-  const btnRect = noBtn.getBoundingClientRect();
-  
-  // Calculate center of button
-  const btnX = btnRect.left + btnRect.width / 2;
-  const btnY = btnRect.top + btnRect.height / 2;
-
-  // Distance between mouse pointer and button center
-  const mouseX = e.clientX;
-  const mouseY = e.clientY;
-  const distance = Math.sqrt(Math.pow(mouseX - btnX, 2) + Math.pow(mouseY - btnY, 2));
-
-  // If the cursor is within 130px, teleport away safely inside viewports
-  if (distance < 130) {
-    // Generate a brand new, random safe position on screen
-    const padding = 60;
-    const maxX = window.innerWidth - btnRect.width - padding;
-    const maxY = window.innerHeight - btnRect.height - padding;
-
-    let randomX = Math.random() * (maxX - padding) + padding;
-    let randomY = Math.random() * (maxY - padding) + padding;
-
-    // Prevent it from accidentally jumping directly under the cursor's current position
-    if (Math.abs(randomX - mouseX) < 100 && Math.abs(randomY - mouseY) < 100) {
-      randomX += randomX < window.innerWidth / 2 ? 150 : -150;
-    }
-
-    noBtn.style.left = randomX + "px";
-    noBtn.style.top = randomY + "px";
+// Main High-Performance Physics Loop
+function updatePhysics() {
+  if (accepted) return;
+  if (!isInitialized) {
+    if(yesBtn.getBoundingClientRect().width > 0) initButtonPosition();
+    requestAnimationFrame(updatePhysics);
+    return;
   }
-});
 
-// Fallback click handler if they somehow manage to touch it on mobile tap
-noBtn.addEventListener("click", () => {
-  alert("被你抓到了！但你其實是願意的對吧 😏");
+  const rect = btn.getBoundingClientRect();
+  const centerX = rect.left + rect.width / 2;
+  const centerY = rect.top + rect.height / 2;
+
+  // Calculate distances and angles between mouse pointer and button core
+  let diffX = centerX - mouseX;
+  let diffY = centerY - mouseY;
+  let dist = Math.sqrt(diffX * diffX + diffY * diffY);
+
+  // Sensitivity Zone radius (160px)
+  const dangerRadius = 160;
+
+  if (dist < dangerRadius && dist > 0) {
+    // Generate exponential push force depending on how close the mouse gets
+    let force = (dangerRadius - dist) / dangerRadius; 
+    let pushAcceleration = force * 14; // Acceleration intensitymultiplier
+
+    velX += (diffX / dist) * pushAcceleration;
+    velY += (diffY / dist) * pushAcceleration;
+  } else {
+    // Elegant friction decelerates the item naturally when mouse is away
+    velX *= 0.92;
+    velY *= 0.92;
+  }
+
+  // Map the position changes based on velocity results
+  btnX += velX;
+  btnY += velY;
+
+  // Edge boundary safety checks (Clean bounces off browser walls)
+  const pad = 20;
+  if (btnX < pad) { btnX = pad; velX *= -0.6; }
+  if (btnX > window.innerWidth - rect.width - pad) { btnX = window.innerWidth - rect.width - pad; velX *= -0.6; }
+  if (btnY < pad) { btnY = pad; velY *= -0.6; }
+  if (btnY > window.innerHeight - rect.height - pad) { btnY = window.innerHeight - rect.height - pad; velY *= -0.6; }
+
+  // Render variables natively via JS smoothly
+  btn.style.left = btnX + "px";
+  btn.style.top = btnY + "px";
+
+  // Hide the button instantly if she bypasses page 1
+  const p1 = document.getElementById("p1");
+  if (!p1.classList.contains("active")) {
+    btn.style.display = "none";
+  } else {
+    btn.style.display = "block";
+  }
+
+  requestAnimationFrame(updatePhysics);
+}
+
+// Run the render pipeline engine
+requestAnimationFrame(updatePhysics);
+
+// Recalculate if window resizes to stop overlapping breaks
+window.addEventListener("resize", () => { isInitialized = false; });
+
+// Mobile touch backup support
+btn.addEventListener("click", () => {
+  alert("逃不掉的～就知道妳最愛我了 🥰");
   start();
 });
-
-// Observe page changes to clear the button on success
-const observer = new MutationObserver(checkBtnVisibility);
-observer.observe(document.getElementById("p1"), { attributes: true, attributeFilter: ['class'] });
 </script>
 
 </body>
