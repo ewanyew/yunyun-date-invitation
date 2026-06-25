@@ -94,6 +94,10 @@ p.desc {
   padding: 15px;
   margin: 15px 0;
   border: 1px solid rgba(255, 79, 155, 0.15);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 input[type="date"], select {
@@ -108,6 +112,12 @@ input[type="date"], select {
   outline: none;
   transition: all 0.3s ease;
   cursor: pointer;
+  
+  /* Safari/iOS Fixes */
+  -webkit-appearance: none;
+  appearance: none;
+  box-sizing: border-box;
+  max-width: 100%;
 }
 
 input[type="date"]::-webkit-calendar-picker-indicator {
@@ -294,7 +304,7 @@ function populateTimeDropdown() {
 window.addEventListener('DOMContentLoaded', populateTimeDropdown);
 
 /* TYPING EFFECT */
-const text = "願不願意一起出去玩嘿嘿 😳";
+const text = "願不願意和我一起出去玩嘿嘿 😈";
 let charIndex = 0;
 function type() {
   if (charIndex < text.length) {
@@ -477,9 +487,21 @@ function updatePhysics() {
 requestAnimationFrame(updatePhysics);
 window.addEventListener("resize", () => { updateHomePosition(); });
 
+
+/* MULTIPLE CUTE POPUPS ENGINE */
+const noAlerts = [
+  "欸？不准點這個啦 😤",
+  "再給你一次機會，重新選一遍 🥺",
+  "我的字典裡沒有不願意這個選項喔 📖",
+  "好啦別鬧了，快點隔壁的『願意』嘛～ 👉👈",
+  "哼，不管你點幾次，你注定是要跟我出去玩的了 🤪❤️"
+];
+let alertIndex = 0;
+
 btn.addEventListener("click", () => {
-  alert("逃不掉的～就知道妳最愛我了 🥰");
-  start();
+  alert(noAlerts[alertIndex]);
+  // Move to next message, loop back to start if she reaches the end
+  alertIndex = (alertIndex + 1) % noAlerts.length;
 });
 </script>
 
