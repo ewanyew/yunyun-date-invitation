@@ -416,16 +416,24 @@ function start() {
 }
 
 /* FINISH APPLICATION */
+/* FINISH APPLICATION & SUBMIT TO GOOGLE FORM */
 function finish() {
-  if (!document.getElementById("act").value) return alert("挑選一個活動吧 🥰");
+  const dateVal = document.getElementById("date").value;
+  const timeVal = document.getElementById("time").value;
+  const foodVal = document.getElementById("food").value;
+  const actVal = document.getElementById("act").value;
 
+  if (!actVal) return alert("挑選一個活動吧 🥰");
+
+  // 1. Update the UI text immediately
   document.getElementById("summary").innerHTML = `
-    <p><strong>📅 日期：</strong> ${document.getElementById("date").value}</p>
-    <p><strong>⏰ 時間：</strong> ${document.getElementById("time").value}</p>
-    <p><strong>🍜 餐廳：</strong> ${document.getElementById("food").value}</p>
-    <p><strong>✨ 活動：</strong> ${document.getElementById("act").value}</p>
+    <p><strong>📅 日期：</strong> ${dateVal}</p>
+    <p><strong>⏰ 時間：</strong> ${timeVal}</p>
+    <p><strong>🍜 餐廳：</strong> ${foodVal}</p>
+    <p><strong>✨ 活動：</strong> ${actVal}</p>
   `;
 
+  // 2. Switch to the final confirmation page and trigger confetti
   show(6);
 
   let end = Date.now() + (3 * 1000);
@@ -434,6 +442,28 @@ function finish() {
     confetti({ particleCount: 3, angle: 120, spread: 55, origin: { x: 1 } });
     if (Date.now() < end) requestAnimationFrame(frame);
   }());
+
+  // 3. Prepare data payload for Google Form
+  const formURL = "https://docs.google.com/forms/d/e/1FAIpQLSfj-bSuTkmDa01o2OSRAY2LAhmvKPZGdkYXDEBaDSO2xtI1qw/formResponse";
+  
+  const formData = new FormData();
+  formData.append("entry.234822483", dateVal); // Replace with your Date Entry ID
+  formData.append("entry.230173302", timeVal); // Replace with your Time Entry ID
+  formData.append("entry.1175596544", foodVal); // Replace with your Food Entry ID
+  formData.append("entry.1429888953", actVal);  // Replace with your Activity Entry ID
+
+  // 4. Send data silently to Google Forms in the background
+  fetch(formURL, {
+    method: "POST",
+    mode: "no-cors", // Crucial: Prevents CORS errors from blocking execution
+    body: formData
+  })
+  .then(() => {
+    console.log("Data successfully sent to Google Form!");
+  })
+  .catch((error) => {
+    console.error("Error sending data:", error);
+  });
 }
 
 /* ========================================================
