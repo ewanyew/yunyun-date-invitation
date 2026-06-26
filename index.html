@@ -102,12 +102,12 @@ p.desc {
 
 input[type="date"], input[type="text"], select {
   width: 100%;
-  padding: 14px 18px;
+  padding: 0 18px; 
   margin: 8px 0;
   border: 2px solid #fff0f6;
   border-radius: 16px;
   font-size: 16px;
-  line-height: 1.2;
+  line-height: 48px; 
   height: 52px; 
   color: #4a3e43;
   background: rgba(255, 255, 255, 0.8);
@@ -115,18 +115,34 @@ input[type="date"], input[type="text"], select {
   transition: all 0.3s ease;
   box-sizing: border-box;
   max-width: 100%;
+  -webkit-appearance: none; 
+  appearance: none;
+}
+
+/* 針對 iOS Safari 日期欄位與文字高度重置，防止高度被壓扁或異常 */
+input[type="date"]::-webkit-date-and-time-value {
+  line-height: 48px;
+  min-height: 48px;
+  margin: 0;
+  padding: 0;
+  text-align: left;
 }
 
 select {
   cursor: pointer;
-  -webkit-appearance: none;
-  appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23ff4f9b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>");
+  background-repeat: no-repeat;
+  background-position: right 18px center;
+  background-size: 16px;
+  padding-right: 40px !important;
 }
 
 /* CUSTOM INPUT FOR OTHER OPTION */
 .custom-input {
   display: none;
   animation: fadeIn 0.4s ease forwards;
+  padding: 14px 18px !important; 
+  line-height: 1.2 !important;
 }
 
 @keyframes fadeIn {
@@ -136,7 +152,7 @@ select {
 
 /* IOS SAFARI DATE PLACEHOLDER FIX */
 input[type="date"]::before {
-  content: "請選擇出差日期 📅";
+  content: "請選擇日期 📅";
   width: 100%;
   color: #a3979d;
 }
@@ -180,7 +196,7 @@ button, #noBtn {
   justify-content: center !important;
   box-sizing: border-box !important;
   height: 50px !important;
-  width: 140px !important; /* Forces uniform explicit desktop sizing */
+  width: 140px !important;
   padding: 0 !important;
   border-radius: 20px !important;
   font-size: 16px !important;
@@ -223,11 +239,11 @@ button {
     max-width: 100%;
   }
   #yesBtn, #noBtn {
-    flex: 1 !important; /* Tells them to grow equally and occupy identical splits of the container */
+    flex: 1 !important;
     width: auto !important;
   }
   #noBtn {
-    position: static !important; /* Pushes into flex flow seamlessly */
+    position: static !important;
     box-shadow: none;
   }
   #noPlaceholder {
@@ -350,16 +366,25 @@ button {
 <script>
 let accepted = false;
 
-/* GENERATE 30-MINUTE INTERVALS DYNAMICALLY */
+/* GENERATE PURE AM/PM TIME LIST */
 function populateTimeDropdown() {
   const timeSelect = document.getElementById("time");
   for (let hour = 0; hour < 24; hour++) {
     for (let min of ["00", "30"]) {
-      let formattedHour = hour.toString().padStart(2, '0');
-      let timeValue = `${formattedHour}:${min}`;
+      let period = hour < 12 ? "AM" : "PM";
+      let displayHour = hour % 12;
+      if (displayHour === 0) displayHour = 12; // 00點與12點都轉換為 12
+      
+      let formattedHour = displayHour.toString().padStart(2, '0');
+      let displayTime = `${formattedHour}:${min} ${period}`; // 格式：09:30 AM
+      
+      // 保持原始 24 小時格式做底層判斷
+      let rawHour = hour.toString().padStart(2, '0');
+      let timeValue = `${rawHour}:${min} ${period}`;
+
       let opt = document.createElement("option");
       opt.value = timeValue;
-      opt.textContent = timeValue;
+      opt.textContent = displayTime;
       timeSelect.appendChild(opt);
     }
   }
@@ -404,7 +429,9 @@ function validateStep3() {
     return alert("請先填寫日期與時間唷 📅");
   }
 
-  const selectedDateTime = new Date(`${dateVal}T${timeVal}`);
+  // 取得前面的 24 小時制純時間部分來比對防呆
+  const pureTime = timeVal.split(" ")[0];
+  const selectedDateTime = new Date(`${dateVal}T${pureTime}`);
   const currentDateTime = new Date();
 
   if (selectedDateTime < currentDateTime) {
@@ -461,10 +488,20 @@ function finish() {
   if (actSelect === "OTHER" && !document.getElementById("customAct").value.trim()) return alert("別忘了填寫想去哪唷 ✍️");
   const actVal = actSelect === "OTHER" ? `✍️ ${document.getElementById("customAct").value.trim()}` : actSelect;
 
-  // 1. Update the UI text immediately
+  // 1. 整理最後畫面顯示的 AM/PM 時間格式
+  const parts = timeVal.split(" ");
+  const rawTime = parts[0]; // 24H制時間
+  const period = parts[1];  // AM 或 PM
+  
+  let h = parseInt(rawTime.split(":")[0]);
+  let m = rawTime.split(":")[1];
+  let displayHour = h % 12;
+  if (displayHour === 0) displayHour = 12;
+  const displayTimeText = `${displayHour.toString().padStart(2, '0')}:${m} ${period}`;
+
   document.getElementById("summary").innerHTML = `
     <p><strong>📅 日期：</strong> ${dateVal}</p>
-    <p><strong>⏰ 時間：</strong> ${timeVal}</p>
+    <p><strong>⏰ 時間：</strong> ${displayTimeText}</p>
     <p><strong>🍜 餐廳：</strong> ${foodVal}</p>
     <p><strong>✨ 活動：</strong> ${actVal}</p>
   `;
@@ -483,15 +520,15 @@ function finish() {
   const formURL = "https://docs.google.com/forms/d/e/1FAIpQLSfj-bSuTkmDa01o2OSRAY2LAhmvKPZGdkYXDEBaDSO2xtI1qw/formResponse";
   
   const formData = new FormData();
-  formData.append("entry.234822483", dateVal); // Replace with your Date Entry ID
-  formData.append("entry.230173302", timeVal); // Replace with your Time Entry ID
-  formData.append("entry.1175596544", foodVal); // Replace with your Food Entry ID
-  formData.append("entry.1429888953", actVal);  // Replace with your Activity Entry ID
+  formData.append("entry.234822483", dateVal); 
+  formData.append("entry.230173302", displayTimeText); // 送出帶有純 AM/PM 的時間給後台
+  formData.append("entry.1175596544", foodVal); 
+  formData.append("entry.1429888953", actVal);  
 
   // 4. Send data silently to Google Forms in the background
   fetch(formURL, {
     method: "POST",
-    mode: "no-cors", // Crucial: Prevents CORS errors from blocking execution
+    mode: "no-cors", 
     body: formData
   })
   .then(() => {
