@@ -286,6 +286,27 @@ button {
   100% { transform: translateY(-15vh) scale(1.2) rotate(360deg); opacity: 0; }
 }
 
+/* CURSOR TRAIL EMOTE COUTURE */
+.cursor-trail {
+  position: fixed;
+  pointer-events: none;
+  z-index: 10000;
+  font-size: 22px;
+  will-change: transform, opacity;
+  animation: flyAndFade 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+@keyframes flyAndFade {
+  0% {
+    transform: translate3d(0, 0, 0) scale(0.6) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(var(--x-move), var(--y-move), 0) scale(1.5) rotate(var(--rot));
+    opacity: 0;
+  }
+}
+
 /* NO CROPPING IMAGE FIX */
 .final-img {
   width: 100%;
@@ -570,10 +591,45 @@ let velX = 0, velY = 0;
 let mouseX = -9999, mouseY = -9999; 
 let isInitialized = false;
 
+/* ========================================================
+   ⚡ CUTE CURSOR TRAIL ENGINE (HEARTS & SHY EMOJIS)
+======================================================== */
+const trailEmojis = ["❤️", "💖", "💕", "🫣", "😳", "🥰", "🫶"];
+let lastTrailTime = 0;
+
 document.addEventListener("mousemove", (e) => {
   mouseX = e.clientX;
   mouseY = e.clientY;
+
+  // Trail generation throttle (fires every 45 milliseconds)
+  const now = Date.now();
+  if (now - lastTrailTime > 45) {
+    createTrailParticle(e.clientX, e.clientY);
+    lastTrailTime = now;
+  }
 });
+
+function createTrailParticle(x, y) {
+  const p = document.createElement("div");
+  p.className = "cursor-trail";
+  p.innerHTML = trailEmojis[Math.floor(Math.random() * trailEmojis.length)];
+  
+  // Position particles offset slightly above the cursor tip
+  p.style.left = (x - 10) + "px";
+  p.style.top = (y - 15) + "px";
+  
+  // Dynamic floating trajectory vectors
+  const xMove = (Math.random() * 80 - 40) + "px"; // Left-right variance
+  const yMove = (-60 - Math.random() * 50) + "px"; // Consistent float upwards
+  const rot = (Math.random() * 90 - 45) + "deg";   // Playful rotation angles
+  
+  p.style.setProperty('--x-move', xMove);
+  p.style.setProperty('--y-move', yMove);
+  p.style.setProperty('--rot', rot);
+  
+  document.body.appendChild(p);
+  setTimeout(() => p.remove(), 1200);
+}
 
 let homeX = 0, homeY = 0;
 
