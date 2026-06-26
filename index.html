@@ -357,21 +357,24 @@ button {
   font-weight: 700;
 }
 
-/* Dynamic Image container inside Ticket */
+/* FIXED IMAGE CONTAINER: Prevent distortion during canvas snapshot */
 .ticket-img-container {
   width: 100%;
   margin-top: 5px;
   border-radius: 14px;
   overflow: hidden;
   border: 1px solid #ffeef7;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #ffffff;
 }
 
-/* PERFECTED IMAGE STYLING: NO CROPPING + KEEP ROUNDED CORNERS */
+/* FIXED IMAGE STYLING: Enforces strict aspect ratio scaling to fix html2canvas distortion */
 .final-img {
-  width: 100%;
-  height: auto;
+  width: 100% !important;
+  height: auto !important;
   max-height: 220px;
-  object-fit: contain;
   display: block;
 }
 
