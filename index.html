@@ -72,7 +72,7 @@ body {
   z-index: 10;
 }
 
-/* 方案 A 防禦性優化：通行證頁面允許滾動，避免內容長時按鈕被擠出 */
+/* 通行證頁面允許滾動，避免內容長時按鈕被擠出 */
 #p6 {
   max-height: 90vh;
   overflow-y: auto;
@@ -265,9 +265,22 @@ button {
   will-change: left, top;
 }
 
+/* DOWNLOAD BUTTON DESIGN UPDATE */
+.download-btn {
+  width: 140px !important;
+  margin: 15px auto 0 auto !important;
+  background: #4a3e43 !important;
+  color: white !important;
+  box-shadow: 0 6px 15px rgba(74, 62, 67, 0.2);
+}
+
+.download-btn:hover {
+  background: #33272c !important;
+}
+
 @media (max-width: 768px) {
   .btn-group { max-width: 100%; }
-  #yesBtn, #noBtn { flex: 1 !important; width: auto !important; }
+  #yesBtn, #noBtn, .download-btn { flex: 1 !important; width: auto !important; }
   #noBtn { position: static !important; box-shadow: none; }
   #noPlaceholder { display: none !important; }
 }
@@ -302,13 +315,11 @@ button {
   100% { transform: translate3d(var(--x-move), var(--y-move), 0) scale(1.5) rotate(var(--rot)); opacity: 0; }
 }
 
-/* ========================================================
-    🎟️ EXCLUSIVE TICKETING DESIGN SYSTEM (P6)
-======================================================== */
+/* EXCLUSIVE TICKETING DESIGN SYSTEM (P6) */
 .ticket-wrapper {
   padding: 4px;
   background: transparent;
-  margin: 15px auto 20px auto;
+  margin: 15px auto 5px auto;
   width: 100%;
   max-width: 360px;
 }
@@ -323,7 +334,6 @@ button {
   text-align: left;
 }
 
-/* Ticket Header styling */
 .ticket-header {
   background: linear-gradient(135deg, #ff4f9b 0%, #ff7bb5 100%);
   padding: 16px;
@@ -343,7 +353,6 @@ button {
   text-transform: uppercase;
 }
 
-/* Ticket Body contents */
 .ticket-body {
   padding: 20px;
   position: relative;
@@ -363,15 +372,15 @@ button {
   gap: 4px;
 }
 
-/* 方案 A 核心修正：允許內容文字自動彈性換行，防止超長中英文撐爆通行證 */
 .ticket-value {
   font-size: 1.05rem;
   color: #33272c;
   font-weight: 700;
-  white-space: pre-wrap;       /* 保持空格換行 */
-  word-break: break-all;       /* 遇到長字串強制換行 */
+  white-space: pre-wrap;
+  word-break: break-all;
   line-height: 1.4;
   margin-top: 2px;
+  min-height: 1.4em; /* 保留高度，防止動態載入時排版跳動 */
 }
 
 /* FIXED IMAGE CONTAINER */
@@ -396,32 +405,18 @@ button {
   display: block;
 }
 
-/* Ticket Cut-Out Decorative Circles */
 .ticket-card::before, .ticket-card::after {
   content: '';
   position: absolute;
   width: 20px;
   height: 20px;
-  background: #ffd5eb; /* 與網頁底色自然融合 */
+  background: #ffd5eb;
   border-radius: 50%;
   top: 62px; 
   z-index: 5;
 }
 .ticket-card::before { left: -11px; box-shadow: inset -3px 0 5px rgba(0,0,0,0.03); }
 .ticket-card::after { right: -11px; box-shadow: inset 3px 0 5px rgba(0,0,0,0.03); }
-
-/* Download Action Button Styling */
-.download-btn {
-  width: 100% !important;
-  max-width: 240px;
-  margin: 5px auto 0 auto !important;
-  background: #4a3e43 !important;
-  color: white !important;
-  box-shadow: 0 6px 15px rgba(74, 62, 67, 0.2);
-}
-.download-btn:hover {
-  background: #33272c !important;
-}
 </style>
 </head>
 <body>
@@ -491,25 +486,25 @@ button {
     <div class="ticket-wrapper">
       <div class="ticket-card" id="dateTicket">
         <div class="ticket-header">
-          <h2>專屬約會通行證</h2>
+          <h2>專專屬約會通行證</h2>
           <p>🫶 EXCLUSIVE DATE PASS 🫶</p>
         </div>
         <div class="ticket-body">
           <div class="ticket-field">
             <div class="ticket-label">📅 DATE / 日期</div>
-            <div class="ticket-value" id="t-date">2026-06-26</div>
+            <div class="ticket-value" id="t-date"></div>
           </div>
           <div class="ticket-field">
             <div class="ticket-label">⏰ TIME / 時間</div>
-            <div class="ticket-value" id="t-time">07:30 PM</div>
+            <div class="ticket-value" id="t-time"></div>
           </div>
           <div class="ticket-field">
             <div class="ticket-label">🍜 DINING / 餐廳</div>
-            <div class="ticket-value" id="t-food">OMAKASE 🍣</div>
+            <div class="ticket-value" id="t-food"></div>
           </div>
           <div class="ticket-field">
             <div class="ticket-label">✨ ACTIVITY / 行程</div>
-            <div class="ticket-value" id="t-act">浪漫看電影 🎬</div>
+            <div class="ticket-value" id="t-act"></div>
           </div>
           <div class="ticket-img-container">
             <img src="photo.jpeg" class="final-img" alt="我們的相片">
@@ -640,7 +635,6 @@ function finish() {
   const timeVal = document.getElementById("time").value;
   
   const foodSelect = document.getElementById("food").value;
-  // 優化：如果是其他，直接填寫內容，不加額外特殊貼圖，留下更多空間
   const foodVal = foodSelect === "OTHER" ? document.getElementById("customFood").value.trim() : foodSelect;
   
   const actSelect = document.getElementById("act").value;
@@ -658,7 +652,7 @@ function finish() {
   if (displayHour === 0) displayHour = 12;
   const displayTimeText = `${displayHour.toString().padStart(2, '0')}:${m} ${period}`;
 
-  // Populate into the elegant Ticket Elements
+  // Dynamic injection into empty Ticket fields
   document.getElementById("t-date").innerText = dateVal;
   document.getElementById("t-time").innerText = displayTimeText;
   document.getElementById("t-food").innerText = foodVal;
@@ -690,21 +684,17 @@ function finish() {
   .catch((error) => { console.error("Error sending data:", error); });
 }
 
-/* ========================================================
-    📸 CONVERT TICKET DOM TO DOWNLOADABLE PNG FILE ENGINE
-======================================================== */
+/* CONVERT TICKET DOM TO DOWNLOADABLE PNG FILE */
 function downloadTicket() {
   const ticket = document.getElementById("dateTicket");
   
-  // Use html2canvas to take a precise high-res snapshot of the ticket card element
   html2canvas(ticket, {
-    scale: 3, // 高清放大，確保長文字換行後在手機上依然銳利清晰
+    scale: 3, 
     backgroundColor: null, 
     useCORS: true 
   }).then(canvas => {
     const imageURI = canvas.toDataURL("image/png");
     
-    // Create custom click trigger to download the picture automatically
     const createLink = document.createElement("a");
     createLink.download = `芸芸專屬約會通行證-${document.getElementById("t-date").innerText}.png`;
     createLink.href = imageURI;
@@ -717,9 +707,7 @@ function downloadTicket() {
   });
 }
 
-/* ========================================================
-    ⚡ PERFECTED LONG-DISTANCE FAST PHYSICS ENGINE
-======================================================== */
+/* LONG-DISTANCE FAST PHYSICS ENGINE */
 const btn = document.getElementById("noBtn");
 const yesBtn = document.getElementById("yesBtn");
 const btnGroup = document.querySelector(".btn-group");
