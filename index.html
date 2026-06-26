@@ -228,10 +228,10 @@ button, #noBtn {
   align-items: center !important;
   justify-content: center !important;
   box-sizing: border-box !important;
-  height: 50px !important;
-  width: 140px !important;
+  height: 50px !important;       /* 其他按鈕的高 */
+  width: 140px !important;       /* 其他按鈕的寬 */
   padding: 0 !important;
-  border-radius: 20px !important;
+  border-radius: 圓角 !important;
   font-size: 16px !important;
   font-weight: 700 !important;
   text-align: center !important;
@@ -265,21 +265,29 @@ button {
   will-change: left, top;
 }
 
-/* DOWNLOAD BUTTON DESIGN UPDATE (FORCED SIZE MATCH) */
+/* 修正：完全對齊其餘所有按鈕的盒模型屬性，強制高度為 50px */
 .download-btn {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  height: 50px !important;
-  width: 140px !important;
-  margin: 15px auto 0 auto !important;
+  box-sizing: border-box !important;
+  height: 50px !important;          /* 完美複製 50px 高度 */
+  width: 140px !important;           /* 完美複製 140px 寬度 */
+  line-height: 50px !important;     /* 綁定文字垂直居中行高 */
+  padding: 0 !important;
+  border-radius: 20px !important;   /* 完美複製圓角 */
+  font-size: 16px !important;       /* 完美複製字級大小 */
+  font-weight: 700 !important;
+  margin: 20px auto 0 auto !important; /* 置中對齊 */
   background: #4a3e43 !important;
   color: white !important;
-  box-shadow: 0 6px 15px rgba(74, 62, 67, 0.2);
+  box-shadow: 0 8px 20px rgba(74, 62, 67, 0.2);
 }
 
 .download-btn:hover {
   background: #33272c !important;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(74, 62, 67, 0.3);
 }
 
 @media (max-width: 768px) {
