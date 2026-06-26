@@ -357,9 +357,10 @@ button {
   font-weight: 700;
 }
 
-/* FIXED IMAGE CONTAINER: Prevent distortion during canvas snapshot */
+/* FIXED IMAGE CONTAINER: Gives container a fixed height and centers the image using Flexbox */
 .ticket-img-container {
   width: 100%;
+  height: 180px;
   margin-top: 5px;
   border-radius: 14px;
   overflow: hidden;
@@ -370,11 +371,12 @@ button {
   background: #ffffff;
 }
 
-/* FIXED IMAGE STYLING: Enforces strict aspect ratio scaling to fix html2canvas distortion */
+/* PERFECTED DOUBLE-AUTO IMAGE STYLING: Enforces real aspect ratio and leaves white space if ratios don't match */
 .final-img {
-  width: 100% !important;
+  width: auto !important;
   height: auto !important;
-  max-height: 220px;
+  max-width: 100% !important;
+  max-height: 100% !important;
   display: block;
 }
 
