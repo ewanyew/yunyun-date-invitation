@@ -334,7 +334,7 @@ button {
       <option value="🎡 去遊樂園玩">去遊樂園玩 🎡</option>
       <option value="OTHER">其它...（自己填寫） 📝</option>
     </select>
-    <input type="text" id="customAct" class="custom-input" placeholder="想去哪裡秘密基地？ 🚀">
+    <input type="text" id="customAct" class="custom-input" placeholder="想去哪裡玩？ 🚀">
     <button class="primary" onclick="finish()">完成 🥰</button>
   </div>
 
@@ -454,12 +454,12 @@ function finish() {
   const timeVal = document.getElementById("time").value;
   
   const foodSelect = document.getElementById("food").value;
-  const foodVal = foodSelect === "OTHER" ? `✍️ 其它：${document.getElementById("customFood").value.trim()}` : foodSelect;
+  const foodVal = foodSelect === "OTHER" ? `✍️ ${document.getElementById("customFood").value.trim()}` : foodSelect;
   
   const actSelect = document.getElementById("act").value;
   if (!actSelect) return alert("挑選一個活動吧 🥰");
-  if (actSelect === "OTHER" && !document.getElementById("customAct").value.trim()) return alert("秘密基地名字別忘了填寫唷 ✍️");
-  const actVal = actSelect === "OTHER" ? `✍️ 其它：${document.getElementById("customAct").value.trim()}` : actSelect;
+  if (actSelect === "OTHER" && !document.getElementById("customAct").value.trim()) return alert("別忘了填寫想去哪唷 ✍️");
+  const actVal = actSelect === "OTHER" ? `✍️ ${document.getElementById("customAct").value.trim()}` : actSelect;
 
   // 1. Update the UI text immediately
   document.getElementById("summary").innerHTML = `
@@ -626,7 +626,7 @@ window.addEventListener("resize", () => { updateHomePosition(); });
 
 /* MULTIPLE CUTE POPUPS ENGINE */
 const noAlerts = [
-  "欸？不准點這個啦 😤",
+  "誒？不准點這個啦 😤",
   "再給你一次機會，重新選一遍 🥺",
   "我的字典裡沒有不願意這個選項喔 📖",
   "好啦別鬧了，快點隔壁的『願意』嘛～ 👉👈",
