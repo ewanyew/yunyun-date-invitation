@@ -228,10 +228,10 @@ button, #noBtn {
   align-items: center !important;
   justify-content: center !important;
   box-sizing: border-box !important;
-  height: 50px !important;       /* 其他按鈕的高 */
-  width: 140px !important;       /* 其他按鈕的寬 */
+  height: 50px !important;       
+  width: 140px !important;       
   padding: 0 !important;
-  border-radius: 圓角 !important;
+  border-radius: 20px !important; /* 已修正：恢復精美圓角 */
   font-size: 16px !important;
   font-weight: 700 !important;
   text-align: center !important;
@@ -265,18 +265,18 @@ button {
   will-change: left, top;
 }
 
-/* 修正：完全對齊其餘所有按鈕的盒模型屬性，強制高度為 50px */
+/* 保存按鈕樣式：寬度、高度、圓角均與其他按鈕完全對齊一致 */
 .download-btn {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
   box-sizing: border-box !important;
-  height: 50px !important;          /* 完美複製 50px 高度 */
-  width: 140px !important;           /* 完美複製 140px 寬度 */
-  line-height: 50px !important;     /* 綁定文字垂直居中行高 */
+  height: 50px !important;          /* 完美對齊 50px 高度 */
+  width: 140px !important;          /* 完美對齊 140px 寬度 */
+  line-height: 50px !important;     
   padding: 0 !important;
-  border-radius: 20px !important;   /* 完美複製圓角 */
-  font-size: 16px !important;       /* 完美複製字級大小 */
+  border-radius: 20px !important;   /* 完美對齊 20px 圓角 */
+  font-size: 16px !important;       
   font-weight: 700 !important;
   margin: 20px auto 0 auto !important; /* 置中對齊 */
   background: #4a3e43 !important;
@@ -392,7 +392,7 @@ button {
   word-break: break-all;
   line-height: 1.4;
   margin-top: 2px;
-  min-height: 1.4em; /* 保留高度，防止動態載入時排版跳動 */
+  min-height: 1.4em; 
 }
 
 /* FIXED IMAGE CONTAINER */
@@ -708,7 +708,7 @@ function downloadTicket() {
     const imageURI = canvas.toDataURL("image/png");
     
     const createLink = document.createElement("a");
-    createLink.download = `芸芸專屬約會通行證-${document.getElementById("t-date").innerText}.png`;
+    createLink.download = `芸芸的專屬約會通行證-${document.getElementById("t-date").innerText}.png`;
     createLink.href = imageURI;
     document.body.appendChild(createLink);
     createLink.click();
