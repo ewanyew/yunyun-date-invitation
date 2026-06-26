@@ -150,17 +150,36 @@ select {
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* IOS SAFARI DATE PLACEHOLDER FIX */
+/* DESKTOP & MOBILE FIXED DATE PLACEHOLDER FIX */
+input[type="date"] {
+  position: relative;
+}
+
 input[type="date"]::before {
   content: "請選擇日期 📅";
-  width: 100%;
+  position: absolute;
+  left: 18px;
+  top: 0;
+  line-height: 48px;
   color: #a3979d;
+  width: calc(100% - 40px);
+  background: transparent;
+  pointer-events: none;
 }
 
 input[type="date"]:focus::before,
 input[type="date"]:valid::before {
   display: none !important;
-  content: "" !important;
+}
+
+/* Hide native desktop placeholder texts to prevent overflow layout breaks */
+input[type="date"]::-webkit-datetime-edit {
+  color: transparent !important;
+}
+
+input[type="date"]:focus::-webkit-datetime-edit,
+input[type="date"]:valid::-webkit-datetime-edit {
+  color: #4a3e43 !important;
 }
 
 input[type="date"]::-webkit-calendar-picker-indicator {
