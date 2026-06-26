@@ -100,7 +100,7 @@ p.desc {
   width: 100%;
 }
 
-input[type="date"], select {
+input[type="date"], input[type="text"], select {
   width: 100%;
   padding: 14px 18px;
   margin: 8px 0;
@@ -113,18 +113,30 @@ input[type="date"], select {
   background: rgba(255, 255, 255, 0.8);
   outline: none;
   transition: all 0.3s ease;
-  cursor: pointer;
-  
-  /* Safari/iOS Fixes */
-  -webkit-appearance: none;
-  appearance: none;
   box-sizing: border-box;
   max-width: 100%;
 }
 
+select {
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* CUSTOM INPUT FOR OTHER OPTION */
+.custom-input {
+  display: none;
+  animation: fadeIn 0.4s ease forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 /* IOS SAFARI DATE PLACEHOLDER FIX */
 input[type="date"]::before {
-  content: "請選擇出發日期 📅";
+  content: "請選擇出差日期 📅";
   width: 100%;
   color: #a3979d;
 }
@@ -298,27 +310,31 @@ button {
 
   <div class="page" id="p4">
     <h1>🍜 芸芸想吃什麼呢？</h1>
-    <select id="food">
+    <select id="food" onchange="toggleCustomInput('food', 'customFood')">
       <option value="">請選擇專屬美食...</option>
       <option value="🍣 OMAKASE 哈哈哈">OMAKASE 哈哈哈 🍣</option>
       <option value="🍔 麥當當">麥當當 🍔</option>
       <option value="🍲 海底撈">海底撈 🍲</option>
       <option value="🥗 c:ontent grain bowl">c:ontent grain bowl 🥗</option>
       <option value="🍨 本宮的茶">本宮的茶 🍨</option>
+      <option value="OTHER">其它...（自己填寫） 📝</option>
     </select>
+    <input type="text" id="customFood" class="custom-input" placeholder="想吃什麼呢？敲碗告訴我 😋">
     <button class="primary" onclick="validateStep4()">下一步 🥰</button>
   </div>
 
   <div class="page" id="p5">
     <h1>🥰 芸芸飯後想去哪呢？</h1>
-    <select id="act">
+    <select id="act" onchange="toggleCustomInput('act', 'customAct')">
       <option value="">請選擇浪漫行程...</option>
       <option value="🎬 浪漫看電影">浪漫看電影 🎬</option>
       <option value="🌳 牽著手悠閒地散散步">牽手散散步 🌳</option>
       <option value="🏎️ 刺激卡丁車">刺激卡丁車 🏎️</option>
       <option value="⛳ 打高爾夫球">打高爾夫球 ⛳</option>
       <option value="🎡 去遊樂園玩">去遊樂園玩 🎡</option>
+      <option value="OTHER">其它...（自己填寫） 📝</option>
     </select>
+    <input type="text" id="customAct" class="custom-input" placeholder="想去哪裡秘密基地？ 🚀">
     <button class="primary" onclick="finish()">完成 🥰</button>
   </div>
 
@@ -367,6 +383,18 @@ function show(n) {
   document.getElementById("p" + n).classList.add("active");
 }
 
+/* TOGGLE CUSTOM TEXT INPUT FOR 'OTHER' OPTION */
+function toggleCustomInput(selectId, inputId) {
+  const selectEl = document.getElementById(selectId);
+  const inputEl = document.getElementById(inputId);
+  if (selectEl.value === "OTHER") {
+    inputEl.style.display = "block";
+    inputEl.focus();
+  } else {
+    inputEl.style.display = "none";
+  }
+}
+
 /* SMART TIMETRAVEL VALIDATION ENGINE */
 function validateStep3() {
   const dateVal = document.getElementById("date").value;
@@ -387,7 +415,12 @@ function validateStep3() {
 }
 
 function validateStep4() {
-  if (!document.getElementById("food").value) return alert("選一個妳想品嚐的美食吧 🍜");
+  const foodSelect = document.getElementById("food").value;
+  const customFood = document.getElementById("customFood").value.trim();
+  
+  if (!foodSelect) return alert("選一個妳想品嚐的美食吧 🍜");
+  if (foodSelect === "OTHER" && !customFood) return alert("既然選了其它，就寫下妳想吃的嘛 ✍️");
+  
   show(5);
 }
 
@@ -415,15 +448,18 @@ function start() {
   show(2);
 }
 
-/* FINISH APPLICATION */
 /* FINISH APPLICATION & SUBMIT TO GOOGLE FORM */
 function finish() {
   const dateVal = document.getElementById("date").value;
   const timeVal = document.getElementById("time").value;
-  const foodVal = document.getElementById("food").value;
-  const actVal = document.getElementById("act").value;
-
-  if (!actVal) return alert("挑選一個活動吧 🥰");
+  
+  const foodSelect = document.getElementById("food").value;
+  const foodVal = foodSelect === "OTHER" ? `✍️ 其它：${document.getElementById("customFood").value.trim()}` : foodSelect;
+  
+  const actSelect = document.getElementById("act").value;
+  if (!actSelect) return alert("挑選一個活動吧 🥰");
+  if (actSelect === "OTHER" && !document.getElementById("customAct").value.trim()) return alert("秘密基地名字別忘了填寫唷 ✍️");
+  const actVal = actSelect === "OTHER" ? `✍️ 其它：${document.getElementById("customAct").value.trim()}` : actSelect;
 
   // 1. Update the UI text immediately
   document.getElementById("summary").innerHTML = `
@@ -467,7 +503,7 @@ function finish() {
 }
 
 /* ========================================================
-   ⚡ PERFECTED LONG-DISTANCE FAST PHYSICS ENGINE
+  ⚡ PERFECTED LONG-DISTANCE FAST PHYSICS ENGINE
 ======================================================== */
 const btn = document.getElementById("noBtn");
 const yesBtn = document.getElementById("yesBtn");
