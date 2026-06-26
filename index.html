@@ -6,7 +6,6 @@
 <title>芸芸 ❤️</title>
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
-<!-- Added html2canvas library to convert DOM element into downloadable image easily -->
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
 <style>
@@ -366,10 +365,13 @@ button {
   overflow: hidden;
   border: 1px solid #ffeef7;
 }
+
+/* PERFECTED IMAGE STYLING: NO CROPPING + KEEP ROUNDED CORNERS */
 .final-img {
   width: 100%;
-  height: 140px; 
-  object-fit: cover;
+  height: auto;
+  max-height: 220px;
+  object-fit: contain;
   display: block;
 }
 
@@ -462,7 +464,6 @@ button {
     <button class="primary" onclick="finish()">完成 🥰</button>
   </div>
 
-  <!-- PAGE 6: REDESIGNED TO HOUSE THE CHROMATIC DOWNLOADABLE TICKET -->
   <div class="page" id="p6">
     <h1>預約成功 ❤️ 要去載芸芸了</h1>
     
